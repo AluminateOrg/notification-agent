@@ -1,0 +1,11 @@
+# IDE
+.idea/
+.DS_Store
+
+# Environment files
+
+# db files 
+na_config.db
+
+config.bat
+node_modules

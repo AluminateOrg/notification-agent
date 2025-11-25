@@ -1,0 +1,77 @@
+version: "3.9"
+
+services:
+  # -----------------------------
+  # Redis (delayed queue, rate limit)
+  # -----------------------------
+  redis:
+    image: redis:7.2
+    ports:
+      - "6379:6379"
+    networks:
+      - aluminate-network
+
+  # -----------------------------
+  # Postgres (audit DB)
+  # -----------------------------
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: pulasthi
+      POSTGRES_PASSWORD: 2002
+      POSTGRES_DB: aluminatenotifina
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - aluminate-network
+
+  # -----------------------------
+  # Notification Agent (NA)
+  # -----------------------------
+  na:
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile
+    depends_on:
+      - redis
+      - postgres
+      # Notice: NO kafka here
+    environment:
+      NA_PORT: 8081
+
+      # Point to MAIN PROJECT BACKEND
+      ORG_API_URL: http://backend:8098
+
+      BOOTSTRAP_TOKEN: sample_bootstrap_token_123
+
+      # --------------------------------
+      # Connect to EXISTING Redpanda Kafka
+      # --------------------------------
+      KAFKA_BROKERS: kafka:9092
+      KAFKA_PUSH_TOPIC: push.notifications
+      KAFKA_GLOBAL_TOPIC: notifications.global
+      KAFKA_GROUP_ID: na-group
+
+      # Redis
+      REDIS_ADDR: redis:6379
+
+      # Postgres
+      DATABASE_URL: postgres://pulasthi:2002@localhost:5432/aluminatenotifina?sslmode=disable
+
+    ports:
+      - "8081:8081"
+    volumes:
+      - na_data:/app
+    networks:
+      - aluminate-network
+
+volumes:
+  pgdata:
+  na_data:
+
+networks:
+  aluminate-network:
+    external: true
+    name: aluminate-global-network
