@@ -1,0 +1,16 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <title>Welcome to {{.OrgName}}</title>
+  </head>
+  <body>
+    <h2>Welcome, {{.Name}}</h2>
+    <p>Your account has been created at <strong>{{.OrgName}}</strong>.</p>
+    <p><strong>Username:</strong> {{.Username}}</p>
+    <p><strong>Temporary password:</strong> {{.Password}}</p>
+    <p>Please <a href="{{.LoginUrl}}">log in</a> and change your password immediately.</p>
+    <hr/>
+    <p>Thanks,<br/>{{.OrgName}} Team</p>
+  </body>
+</html>

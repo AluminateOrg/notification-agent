@@ -1,0 +1,11 @@
+# IDE
+.vscode/
+.idea/
+.DS_Store
+
+# Environment files
+.env
+
+# db files 
+na_config.db
+
