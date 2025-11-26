@@ -1,10 +1,17 @@
 package config
 
 import (
+	
 	"os"
 	"strconv"
 	"strings"
+
+	"github.com/joho/godotenv"
 )
+
+func init() {
+	_ = godotenv.Load()
+}
 
 type Config struct {
 	Port string
@@ -31,6 +38,8 @@ type Config struct {
 	RateLimitPerMin int
 	MaxRetries     int
 }
+
+
 
 func Load() *Config {
 	c := &Config{
@@ -59,6 +68,7 @@ func Load() *Config {
 		MaxRetries:   atoi("MAX_RETRIES", 5),
 	}
 	return c
+
 }
 
 func get(k, def string) string {

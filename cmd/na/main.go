@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"path/filepath"
 	"time"
 
 	"github.com/AluminateOrg/notification-agent/internal/config"
@@ -43,8 +44,11 @@ func main() {
 		log.Info().Str("orgId", orgId).Str("orgName", name).Msg("registration successful")
 	}
 
+
 	//templates 
-	tpl, err := templates.NewTemplateManager("./templates")
+	wd, _ := os.Getwd()
+	tplPath := filepath.Join(wd, "templates")
+	tpl, err := templates.NewTemplateManager(tplPath)
 	if err != nil {log.Fatal().Err(err).Msg("failed to load templates")}
 
 	kc := kafka.NewKafkaClient(cfg.KafkaBrokers)
@@ -56,6 +60,7 @@ func main() {
 
 	//email reader 
 	emailReader := kc.NewEmailReader("onboarding.members", "na-email-group")
+
 
 	//email worker 
 	ewcfg := &worker.EmailConfig{
