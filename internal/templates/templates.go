@@ -4,7 +4,9 @@ import (
 	"bytes"
 	"html/template"
 	"io/fs"
+	"log"
 	"path/filepath"
+	"runtime"
 	"sync"
 )
 
@@ -39,4 +41,10 @@ func (tm *TemplateManager) Render(name string, data any) (string, error) {
 	var buf bytes.Buffer
 	if err := t.Execute(&buf, data); err != nil {return "", err}
 	return buf.String(), nil
+}
+
+func TemplateDir() string {
+	_, file, _, _ := runtime.Caller(0)
+	log.Println("file path: ", filepath.Join(filepath.Dir(filepath.Dir(file)), "templates"))
+	return filepath.Join(filepath.Dir(filepath.Dir(file)), "templates")
 }
